@@ -1,0 +1,1 @@
+#define VCDDIFF_VERSION "1-cg"
