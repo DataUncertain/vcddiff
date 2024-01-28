@@ -57,11 +57,14 @@ vcd::vcd(const std::string filename, int raise_signals, int tspc)
     const longname *stack = NULL;
     int module_level = 0;
 
-    char buffer[LINE_MAX];
+    char buffer_[LINE_MAX], *buffer;
     size_t line = 0;
     bool waiting_for_end = false;
-    while (fgets(buffer, LINE_MAX, _file) != NULL) {
+    while (fgets(buffer_, LINE_MAX, _file) != NULL) {
         line++;
+        buffer = buffer_;
+        while(isspace(*buffer))
+            buffer++;
 
         /* Check to see if we're inside some multi-line block that I
          * just don't bother with and should therefor ignore pretty
@@ -202,8 +205,11 @@ void vcd::step(void)
     /* Read the input file until we find another cycle deliminator.  If
      * we don't find one then that means the file is over, which is OK
      * because we've just invalidated our cache. */
-    char buffer[LINE_MAX];
-    while (fgets(buffer, LINE_MAX, _file) != NULL) {
+    char buffer_[LINE_MAX],*buffer;
+    while (fgets(buffer_, LINE_MAX, _file) != NULL) {
+        buffer = buffer_;
+        while(isspace(*buffer))
+            buffer++;
         /* We've found a cycle deliminator, which means we've finished
          * our step. */
         if (str_start(buffer, "#")) {
